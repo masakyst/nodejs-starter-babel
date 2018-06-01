@@ -92,7 +92,8 @@ namespace create => sub {
         {
             create_file('.babelrc', $BABELRC);
             create_file('.npmrc', "save-exact=true");
-            create_file('package.json', $PACKAGE_JSON);
+            my $func_name = (split('/', getcwd))[-1];
+            create_file('package.json', sprintf($PACKAGE_JSON, $func_name));
             sh q(npm install);
         }
         # setup direnv
