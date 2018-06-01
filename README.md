@@ -12,4 +12,7 @@ Setup
 Hello! 
 
     $ babel --version
+    $ npm start
+    $ npm run flow
+
     
