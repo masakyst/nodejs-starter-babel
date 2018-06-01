@@ -1,7 +1,9 @@
 
+use Cwd 'getcwd';
+
 my $BABELRC = << "BABELRC";
 {
-  "presets": [
+ "presets": [
     "flow",
     ["env", {
       "targets": {
