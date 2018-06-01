@@ -1,0 +1,122 @@
+
+# use Template;
+
+our $BABEL_VERSION = '6.26.0';
+our $AWS_SDK_VERSION = '2.223.1';
+
+my $BABELRC = << "BABELRC";
+{
+  "presets": [
+    "flow",
+    ["env", {
+      "targets": {
+        "node": "8.10"
+      }
+    }]
+  ]
+}
+BABELRC
+
+my $PACKAGE_JSON = << "PACKAGE_JSON";
+{
+  "name": "%s",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "start": "ntl",
+    "watch": "babel -w src -d dist",
+    "build": "babel src -d dist ",
+    "flow": "flow"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "6.26.0",
+    "babel-core": "6.26.0",
+    "babel-preset-env": "1.7.0",
+    "babel-preset-flow": "6.23.0",
+    "claudia": "3.4.1",
+    "flow-bin": "0.70.0",
+    "flow-typed": "2.4.0",
+    "lambda-local": "1.4.7",
+    "npm-run-all": "4.1.2",
+    "ntl": "2.0.0"
+  },
+  "dependencies": {
+  }
+}
+PACKAGE_JSON
+
+my $ENVRC = << 'ENVRC';
+export PATH=$PATH:`pwd`/node_modules/.bin
+ENVRC
+
+my $INDEX_JS_HANDLER = << 'INDEX_JS_HANDLER';
+console.log("hello babel");
+INDEX_JS_HANDLER
+
+my $FLOW_CONFIG = << 'FLOW_CONFIG';
+[ignore]
+.*/node_modules/.*
+.*/dist/.*
+
+[include]
+
+[libs]
+
+[lints]
+
+[options]
+
+[strict]
+FLOW_CONFIG
+
+
+sub create_file {
+    my ($path, $source) = @_;
+    open my $fh, '>', $path or die qw/Can't open file: $!/;
+    print $fh $source;
+    close $fh;
+}
+
+namespace create => sub {
+    
+    desc 'create react files';
+    task reactjs => sub {
+        # setup git
+        {
+            sh q(git init);
+            create_file('.gitignore', "/dist\n/node_modules");
+        }
+        # setup nodejs/babel
+        {
+            create_file('.babelrc', $BABELRC);
+            create_file('.npmrc', "save-exact=true");
+            create_file('package.json', $PACKAGE_JSON);
+            sh q(npm install);
+        }
+        # setup direnv
+        {
+            create_file('.envrc', $ENVRC);
+            sh q(direnv allow);
+        }
+        # index.js handler
+        {
+            sh q(mkdir src);
+            create_file('./src/index.js', $INDEX_JS_HANDLER);
+            sh q(mkdir dist);
+        }
+        # flow!
+        # sh q(npm run flow init);
+        create_file('.flowconfig', $FLOW_CONFIG);
+        # bye!!
+        sh q(rm ./Daikufile);
+ 
+    };
+
+};
