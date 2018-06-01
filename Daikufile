@@ -81,8 +81,8 @@ sub create_file {
 
 namespace create => sub {
     
-    desc 'create react files';
-    task reactjs => sub {
+    desc 'create files';
+    task nodejs => sub {
         # setup git
         {
             sh q(git init);
