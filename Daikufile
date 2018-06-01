@@ -54,7 +54,14 @@ export PATH=$PATH:`pwd`/node_modules/.bin
 ENVRC
 
 my $INDEX_JS_HANDLER = << 'INDEX_JS_HANDLER';
-console.log("hello babel");
+console.log("hello babel and flow");
+
+// @flow
+function square(n: number): number {
+  return n * n;
+}
+
+square("2");
 INDEX_JS_HANDLER
 
 my $FLOW_CONFIG = << 'FLOW_CONFIG';
